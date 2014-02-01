@@ -635,4 +635,7 @@
 
     <!-- Content description for dismiss button on badge. [CHAR LIMIT=NONE] -->
     <string name="description_dismiss">Dismiss</string>
+
+    <!-- Forward lookup -->
+    <string name="nearby_places">Nearby places</string>
 </resources>
