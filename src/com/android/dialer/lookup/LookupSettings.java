@@ -17,10 +17,11 @@
 package com.android.dialer.lookup;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.provider.Settings;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import java.util.List;
 
 public final class LookupSettings {
     private static final String TAG = LookupSettings.class.getSimpleName();
@@ -65,10 +66,6 @@ public final class LookupSettings {
     }
 
     public static String getReverseLookupProvider(Context context) {
-        boolean gservicesAvailable =
-                GooglePlayServicesUtil.isGooglePlayServicesAvailable(
-                context) == ConnectionResult.SUCCESS;
-
         String provider = getString(context,
                 Settings.System.REVERSE_LOOKUP_PROVIDER);
 
@@ -77,7 +74,7 @@ public final class LookupSettings {
             // provider in the list (OpenCnam)
             putString(context,
                     Settings.System.REVERSE_LOOKUP_PROVIDER,
-                    gservicesAvailable ? RLP_GOOGLE : RLP_OPENCNAM);
+                    isGmsInstalled(context) ? RLP_GOOGLE : RLP_OPENCNAM);
 
             provider = getString(context,
                     Settings.System.REVERSE_LOOKUP_PROVIDER);
@@ -92,5 +89,16 @@ public final class LookupSettings {
 
     private static void putString(Context context, String key, String value) {
         Settings.System.putString(context.getContentResolver(), key, value);
+    }
+
+    private static boolean isGmsInstalled(Context context) {
+        PackageManager pm = context.getPackageManager();
+        List<PackageInfo> packages = pm.getInstalledPackages(0);
+        for (PackageInfo info : packages) {
+            if (info.packageName.equals("com.google.android.gms")) {
+                return true;
+            }
+        }
+        return false;
     }
 }
